@@ -1,10 +1,12 @@
 ﻿using CafeBoost.Data;
 using CyberBoost.UI.Properties;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,8 +21,21 @@ namespace CyberBoost.UI
         public AnaForm()
         {
             InitializeComponent();
-            OrnekUrunleriYukle();
+            VeriOku();
+            //OrnekUrunleriYukle();
             MasalariOlustur();
+        }
+
+        private void VeriOku()
+        {
+            try
+            {
+                string json = File.ReadAllText("veri.json");
+                db = JsonConvert.DeserializeObject<KafeVeri>(json);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void OrnekUrunleriYukle()
@@ -52,7 +67,7 @@ namespace CyberBoost.UI
             for (int i = 1; i <= db.MasaAdet; i++)
             {
                 lvi = new ListViewItem("Masa " + i);
-                lvi.ImageKey = "bos"; // başta hepsi boş
+                lvi.ImageKey = db.AktifSiparisler.Any(x => x.MasaNo == i) ? "dolu" : "bos";
                 lvi.Tag = i; // masaları etiketledik 
                 lvwMasalar.Items.Add(lvi);
             }
@@ -120,6 +135,17 @@ namespace CyberBoost.UI
                     lvi.ImageKey = "dolu";
                 }
             }
+        }
+
+        private void AnaForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            VeriKaydet();
+        }
+
+        private void VeriKaydet()
+        {
+            string json = JsonConvert.SerializeObject(db, Formatting.Indented);
+            File.WriteAllText("veri.json", json);
         }
     }
 }
