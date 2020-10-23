@@ -13,15 +13,15 @@ namespace CyberBoost.UI
 {
     public partial class SiparisForm : Form
     {
+        public event EventHandler<MasaTasimaEventArgs> MasaTasindi;
+
         readonly KafeVeri db; // ileride değiştirmeye çalışmayalım diye readonly (ekstra güvenlik önlemi denilebilir) demesek de aynı çalışır.
         readonly Siparis siparis;
-        readonly AnaForm anaForm;
         readonly BindingList<SiparisDetay> blSiparisDetaylar; // başta null
-        public SiparisForm(KafeVeri KafeVeri, Siparis siparis, AnaForm anaForm)
+        public SiparisForm(KafeVeri KafeVeri, Siparis siparis)
         {
             db = KafeVeri;
             this.siparis = siparis;
-            this.anaForm = anaForm;
             InitializeComponent();
             dgvSiparisDetaylar.AutoGenerateColumns = false;
             MasalariListele();
@@ -143,9 +143,23 @@ namespace CyberBoost.UI
             int kaynak = siparis.MasaNo;
             int hedef = (int)cboMasalar.SelectedItem;
             siparis.MasaNo = hedef;
-            anaForm.MasaTasi(kaynak, hedef);
-
             MasaNoGuncelle();
+            MasalariListele();
+
+            MasaTasimaEventArgs args = new MasaTasimaEventArgs()
+            {
+                EskiMasaNo = kaynak,
+                YeniMasaNo = hedef
+            };
+            if (MasaTasindi != null)
+            {
+                MasaTasindiginda(args);
+            }
+        }
+
+        protected virtual void MasaTasindiginda(MasaTasimaEventArgs args)
+        {
+            MasaTasindi?.Invoke(this, args);
         }
     }
 }
