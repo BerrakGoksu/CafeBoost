@@ -12,8 +12,10 @@ namespace CafeBoost.Data
         public int MasaNo { get; set; }
         public DateTime? AcilisZamani { get; set; }
         public DateTime? KapanisZamani { get; set; }
+        public decimal OdenenTutar { get; set; }
         public SiparisDurum Durum { get; set; }
-        //public string ToplamTutarTL { get { return ToplamTutar() + "TL"; } }
+        public string ToplamTutarTL { get { return ToplamTutar() + "TL"; } }
+
 
         public Siparis()
         {

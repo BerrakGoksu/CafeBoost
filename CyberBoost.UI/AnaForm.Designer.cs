@@ -44,6 +44,7 @@
             this.lvwMasalar.Size = new System.Drawing.Size(722, 409);
             this.lvwMasalar.TabIndex = 0;
             this.lvwMasalar.UseCompatibleStateImageBehavior = false;
+            this.lvwMasalar.DoubleClick += new System.EventHandler(this.lvwMasalar_DoubleClick);
             // 
             // menuStrip1
             // 
