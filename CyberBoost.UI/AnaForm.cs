@@ -49,7 +49,7 @@ namespace CyberBoost.UI
             #endregion
             #region Masaların Oluşturulması
             ListViewItem lvi;
-            for (int i = 1; i <= masaAdedi; i++)
+            for (int i = 1; i <= db.MasaAdet; i++)
             {
                 lvi = new ListViewItem("Masa " + i);
                 lvi.ImageKey = "bos"; // başta hepsi boş
@@ -61,12 +61,12 @@ namespace CyberBoost.UI
 
         private void tsmiUrunler_Click(object sender, EventArgs e)
         {
-            new UrunlerForm().ShowDialog();
+            new UrunlerForm(db).ShowDialog();
         }
 
         private void tsmiGecmisSiparisler_Click(object sender, EventArgs e)
         {
-            new GecmisSiparislerForm().ShowDialog();
+            new GecmisSiparislerForm(db).ShowDialog();
         }
 
         private void lvwMasalar_DoubleClick(object sender, EventArgs e)
@@ -82,7 +82,7 @@ namespace CyberBoost.UI
                 lvwMasalar.SelectedItems[0].ImageKey = "dolu";
             }
 
-            SiparisForm frmSiparis = new SiparisForm(db, siparis); // basınca siparisform açılır
+            SiparisForm frmSiparis = new SiparisForm(db, siparis, this); // basınca siparisform açılır
             DialogResult dr = frmSiparis.ShowDialog();
             
             // sipariş iptal edildiyse ya da ödeme alındıysa 
@@ -90,9 +90,7 @@ namespace CyberBoost.UI
             {
                 lvwMasalar.SelectedItems[0].ImageKey = "bos";
             }
-
         }
-
         private Siparis AktifSiparisBul(int masaNo)
         {
             foreach (var item in db.AktifSiparisler)
@@ -107,6 +105,21 @@ namespace CyberBoost.UI
             #region Linq yöntemi
             //return db.AktifSiparisler.FirstOrDefault(x => x.Masa.No == masaNo); 
             #endregion
+        }
+
+        public void MasaTasi (int kaynak, int hedef)
+        {
+            foreach (ListViewItem lvi in lvwMasalar.Items)
+            {
+                if ((int)lvi.Tag == kaynak)
+                {
+                    lvi.ImageKey = "bos";
+                }
+                if ((int)lvi.Tag == hedef)
+                {
+                    lvi.ImageKey = "dolu";
+                }
+            }
         }
     }
 }

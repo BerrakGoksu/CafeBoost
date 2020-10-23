@@ -15,13 +15,16 @@ namespace CyberBoost.UI
     {
         readonly KafeVeri db; // ileride değiştirmeye çalışmayalım diye readonly (ekstra güvenlik önlemi denilebilir) demesek de aynı çalışır.
         readonly Siparis siparis;
+        readonly AnaForm anaForm;
         readonly BindingList<SiparisDetay> blSiparisDetaylar; // başta null
-        public SiparisForm(KafeVeri KafeVeri, Siparis siparis)
+        public SiparisForm(KafeVeri KafeVeri, Siparis siparis, AnaForm anaForm)
         {
             db = KafeVeri;
             this.siparis = siparis;
+            this.anaForm = anaForm;
             InitializeComponent();
             dgvSiparisDetaylar.AutoGenerateColumns = false;
+            MasalariListele();
             UrunleriListele();
             MasaNoGuncelle();
             OdemeTutariGuncelle();
@@ -31,6 +34,18 @@ namespace CyberBoost.UI
             dgvSiparisDetaylar.DataSource = blSiparisDetaylar; // ekranı kapatıp açınca kaybolmaması için yazdık.
 
 
+        }
+
+        private void MasalariListele()
+        {
+            cboMasalar.Items.Clear();
+            for (int i = 0; i < db.MasaAdet; i++)
+            {
+                if (!db.AktifSiparisler.Any(x => x.MasaNo == i))
+                {
+                    cboMasalar.Items.Add(i);
+                }
+            }
         }
 
         private void BlSiparisDetaylar_ListChanged(object sender, ListChangedEventArgs e)
@@ -119,6 +134,18 @@ namespace CyberBoost.UI
             db.GecmisSiparisler.Add(siparis);
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void btnMasaTasi_Click(object sender, EventArgs e)
+        {
+            if (cboMasalar.SelectedIndex < 0) return;
+
+            int kaynak = siparis.MasaNo;
+            int hedef = (int)cboMasalar.SelectedItem;
+            siparis.MasaNo = hedef;
+            anaForm.MasaTasi(kaynak, hedef);
+
+            MasaNoGuncelle();
         }
     }
 }
